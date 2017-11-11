@@ -1,0 +1,22 @@
+{
+  "name": "friday",
+  "version": "1.0.0",
+  "description": "Mendix Cloud deployment tool",
+  "main": "./src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brfreek/Friday.git"
+  },
+  "keywords": [
+    "mendix"
+  ],
+  "author": "Freek Brinkhuis",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/brfreek/Friday/issues"
+  },
+  "homepage": "https://github.com/brfreek/Friday#readme"
+}
