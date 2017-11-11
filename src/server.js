@@ -42,7 +42,8 @@ function hasAdmin(){
             uuid: uuid,
             name: 'friday',
             password: hash,
-            token: ''
+            mendixApiKey: '',
+            token: '',
         });
         console.log("Change the admin password ASAP!!");
         db.saveDatabase();
