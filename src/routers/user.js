@@ -13,7 +13,6 @@ var db = new loki('./friday.db.json',{
 router.get('/', (req, res) => {
     db.loadDatabase();
     var users = db.getCollection("users");
-    console.log("users: " + JSON.stringify(users));
     if(users.length !== null){
         res.json(users.data);
         res.send();
@@ -29,7 +28,6 @@ router.get('/', (req, res) => {
 router.put('/', (req, res) => {
     db.loadDatabase();
     var users = db.getCollection("users");
-
     if(req.body && req.query.uuid){
         if(users !== null){
             var user = users.find({uuid: req.query.uuid});
@@ -39,9 +37,7 @@ router.put('/', (req, res) => {
                     user.name = req.body.name;
                 }
                 if(req.body.password){
-                    const hash = SHA256(req.body.password).toString();
-                    console.log("User: " + user.name + " updating password: " + hash);
-                    
+                    const hash = SHA256(req.body.password).toString();                   
                     user.password = hash;
                 }
                 if(req.body.mendixApiKey){

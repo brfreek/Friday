@@ -22,7 +22,6 @@ router.post('/', (req, res) => {
             res.send();
         } else {
             const hash = SHA256(req.body.password).toString();
-            console.log('Hash for comparison: ' + hash);
             var user = users.find({name: req.body.name, password: hash, uuid: req.body.uuid});
             console.log(user);
             if(user !== null && user.length > 0){

@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/brfreek/Friday#readme",
   "dependencies": {
-    "axiom": "^0.1.6",
+    "axios": "^0.17.0",
     "crypto-js": "^3.1.9-1",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
