@@ -6,7 +6,7 @@ var db = new loki('./friday.db.json');
 db.loadDatabase();
 
 router.get('/', (req, res) => {
-    res.send(JSON.stringify({message: 'success'}));
+
 });
 
 module.exports = router;
