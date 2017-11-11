@@ -4,7 +4,8 @@
   "description": "Mendix Cloud deployment tool",
   "main": "./src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./src/server.js",
+    "build": "webpack ."
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/brfreek/Friday/issues"
   },
-  "homepage": "https://github.com/brfreek/Friday#readme"
+  "homepage": "https://github.com/brfreek/Friday#readme",
+  "dependencies": {
+    "axiom": "^0.1.6",
+    "bcrypt": "^1.0.3",
+    "express": "^4.16.2",
+    "lokijs": "^1.5.1"
+  }
 }
