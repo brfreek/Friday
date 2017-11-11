@@ -1,12 +1,16 @@
 const express = require('express');
 const loki = require('lokijs');
-
 var router = express.Router();
-var db = new loki('./friday.db.json');
+
+const db = new loki('./friday.db.json');
 db.loadDatabase();
 
 router.get('/', (req, res) => {
-    res.send(JSON.stringify({message: 'success'}));
+
+    var users = db.getCollection('users');
+    console.log("I have: " + users + " users");
+
+    res.send(users);
 });
 
 module.exports = router;
