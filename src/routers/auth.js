@@ -7,11 +7,9 @@ const secret = require('../helper/secret.js');
 
 const router = express.Router();
 
-var db = new loki('./friday.db.json');
-db.loadDatabase();
+var db;
 
 router.post('/', (req, res) => {
-    db.loadDatabase();
     if(req.body){
         var users = db.getCollection('users');
         if(users === null || users.length === 0){
@@ -51,4 +49,8 @@ router.post('/', (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = function(database){
+    db = database;
+
+    return router;
+};

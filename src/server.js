@@ -10,35 +10,45 @@ const jwt = require('jsonwebtoken');
 
 var app = express();
 
+var db = new loki(__dirname + '/friday.json', {
+    autoload: true,
+    autoloadCallback: databaseInitialize,
+    autosave: true,
+    autosaveInterval: 1000
+});
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-// Configure LokiDB and start service after DB is initialized
-const db = new loki('./friday.db.json',{
-    autoload: true,
-    autoloadCallback: databaseInitialize,
-    autosave: false
-});
-
-function databaseInitialize(){
+function databaseInitialize() {
     var users = db.getCollection("users");
-
-    if(users === null){
-        users = db.addCollection("users");
+    var apps = db.getCollection("apps");
+    if(users === null) {
+        users = db.addCollection("users",{
+            unique: ['name'],
+            autoupdate: true
+        });
     }
+    if(apps === null) {
+        apps = db.addCollection("apps", {
+            unique: ['uuid'],
+            autoupdate: true
+        })
+    }
+
     hasAdmin();
 }
 
 function hasAdmin(){
     var users = db.getCollection("users");
-    var admin = users.find({name: 'friday'});
-    console.log(admin);
+    var admin = users.find({name: "friday"});
+    console.log('Am i loaded?, %s' + admin);
     if(admin.length === 0){
         const password = 'admin';
         const uuid = uuidv1();
         const hash = SHA256(password).toString();
-        users.insert({
+        var newAdmin = users.insert({
             uuid: uuid,
             name: 'friday',
             password: hash,
@@ -46,18 +56,24 @@ function hasAdmin(){
             token: '',
         });
         console.log("Change the admin password ASAP!!");
-        db.saveDatabase();
+        
+        users.on("error", (errorDoc) => {
+            if(errorDoc === newAdmin){
+                console.log("We fucked up");
+            }
+        });
+
         startServer();
     } else {
         startServer();        
-    }
+    }    
 }
 
 function startServer(){
     const approuter = require('./routers/app');
     const userrouter = require('./routers/user');
     const authrouter = require('./routers/auth');
-    app.use('/api/v1/auth', authrouter);
+    app.use('/api/v1/auth', authrouter(db));
     app.use((req, res, next) => {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         if(token){
@@ -80,8 +96,8 @@ function startServer(){
             res.send();
         }
     });
-    app.use('/api/v1/apps', approuter);
-    app.use('/api/v1/users', userrouter);
+    app.use('/api/v1/apps', approuter(db));
+    app.use('/api/v1/users', userrouter(db));
 
     app.listen(3001);
 }

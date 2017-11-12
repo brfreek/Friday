@@ -1,19 +1,16 @@
 const express = require('express');
-const loki = require('lokijs');
 const SHA256 = require('crypto-js/sha256');
 const uuid = require('uuid/v1');
+const loki = require('lokijs');
+
+var db;
 
 var router = express.Router();
 
-var db = new loki('./friday.db.json',{
-    autoload: true,
-    autosave: false
-});
-
 router.get('/', (req, res) => {
-    db.loadDatabase();
+
     var users = db.getCollection("users");
-    if(users.length !== null){
+    if(users !== null){
         res.json(users.data);
         res.send();
     } else {
@@ -26,7 +23,6 @@ router.get('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-    db.loadDatabase();
     var users = db.getCollection("users");
     if(req.body && req.query.uuid){
         if(users !== null){
@@ -44,7 +40,6 @@ router.put('/', (req, res) => {
                     user.mendixApiKey = req.body.mendixApiKey;
                 }
                 users.update(user);
-                db.saveDatabase();
                 
                 res.status(200);
                 res.json({
@@ -90,9 +85,7 @@ router.put('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    db.loadDatabase();
     var users = db.getCollection("users");
-
     if(req.body){
         if(!req.body.name || !req.body.password){
             res.status(400);
@@ -113,7 +106,6 @@ router.post('/', (req, res) => {
                     mendixApiKey: req.body.mendixApiKey !== null ? req.body.mendixApiKey : ''
                 }
                 users.insert(user);
-                db.saveDatabase();
                 
                 res.status(200);
                 res.json({
@@ -147,4 +139,8 @@ router.post('/', (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = function(database){
+    db = database;
+
+    return router;
+};
