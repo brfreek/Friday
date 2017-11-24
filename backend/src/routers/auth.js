@@ -11,7 +11,10 @@ var db;
 
 router.post('/', (req, res) => {
     if(req.body){
+
         var users = db.getCollection('users');
+        console.log(users);
+        console.log(JSON.stringify(req.body));
         if(users === null || users.length === 0){
             res.status(404);
             res.json({
@@ -20,7 +23,8 @@ router.post('/', (req, res) => {
             res.send();
         } else {
             const hash = SHA256(req.body.password).toString();
-            var user = users.find({name: req.body.name, password: hash, uuid: req.body.uuid});
+            console.log("hash: " + hash);
+            var user = users.find({name: req.body.name, password: hash});
             console.log(user);
             if(user !== null && user.length > 0){
                 user = user[0];

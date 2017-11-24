@@ -2,7 +2,6 @@
 const express = require('express');
 const morgan = require('morgan');
 const loki = require('lokijs');
-const axiom = require('axiom');
 const SHA256 = require('crypto-js/sha256');
 const uuidv1 = require('uuid/v1');
 const bodyParser = require('body-parser');
@@ -20,6 +19,12 @@ var db = new loki(__dirname + '/friday.json', {
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 function databaseInitialize() {
     var users = db.getCollection("users");
@@ -74,6 +79,7 @@ function startServer(){
     const userrouter = require('./routers/user');
     const authrouter = require('./routers/auth');
     app.use('/api/v1/auth', authrouter(db));
+    
     app.use((req, res, next) => {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         if(token){
