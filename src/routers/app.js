@@ -30,7 +30,6 @@ router.get('/', (req, res) => {
         } else {
             const userName = user[0].name;
             const apiKey = user[0].mendixApiKey;
-            console.log("Retrieving apps for " + userName + " with apiKey: " + apiKey);
             try{
                 axios({
                     url: apiURL,
