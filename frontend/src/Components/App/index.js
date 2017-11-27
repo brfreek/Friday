@@ -12,13 +12,15 @@ class App extends Component {
   constructor(){
     super();
     var localToken = localStorage.getItem('friday-jwt-token');
+    var localUuid = localStorage.getItem('friday-user-uuid');
     this.state = {
       jwtToken: localToken,
-      user: null
+      user: localUuid
     }
 
     this.updateUser = this.updateUser.bind(this);
   }
+
 
   updateUser(user){
     var state = this.state;
@@ -27,11 +29,12 @@ class App extends Component {
     state.userUuid = user.uuid;
     this.setState(state);
     localStorage.setItem('friday-jwt-token',  user.token);
+    localStorage.setItem('friday-user-uuid', user.uuid);
   }
   
   render() {
     const serverURL = "http://localhost:3001/api/v1";
-    if(!this.state.jwtToken || this.state.jwtToken === ""){
+    if(!this.state.jwtToken || this.state.jwtToken === "" || !this.state.user || this.state.user === ""){
       return (
         <MuiThemeProvider>
           <Login serverURL={serverURL} updateUser={this.updateUser}/>
@@ -40,8 +43,7 @@ class App extends Component {
     } else {
       return(
         <MuiThemeProvider>
-          hi
-          <Dashboard token={this.state.jwtToken}/>
+          <Dashboard token={this.state.jwtToken} userUuid={this.state.userUuid} userName={this.state.userName}/>
         </MuiThemeProvider>
       )
     }
