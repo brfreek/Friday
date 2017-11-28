@@ -15,35 +15,47 @@ class App extends Component {
     var localUuid = localStorage.getItem('friday-user-uuid');
     this.state = {
       jwtToken: localToken,
-      user: localUuid
+      user: localUuid,
+      userName: '',
+      sessionExpired: false,
     }
 
     this.updateUser = this.updateUser.bind(this);
+    this.logout = this.logout.bind(this);
   }
-
 
   updateUser(user){
     var state = this.state;
     state.jwtToken = user.token;
     state.userName = user.name;
-    state.userUuid = user.uuid;
+    state.user = user.uuid;
     this.setState(state);
     localStorage.setItem('friday-jwt-token',  user.token);
     localStorage.setItem('friday-user-uuid', user.uuid);
   }
   
+  logout(expired){
+    var state = this.state;
+    state.jwtToken = "";
+    state.userName = "";
+    state.user = "";
+    state.expired = expired;
+    this.setState(state);
+    localStorage.setItem('friday-jwt-token', null);
+    localStorage.setItem('friday-user-uuid', null);    
+  }
   render() {
     const serverURL = "http://localhost:3001/api/v1";
     if(!this.state.jwtToken || this.state.jwtToken === "" || !this.state.user || this.state.user === ""){
       return (
         <MuiThemeProvider>
-          <Login serverURL={serverURL} updateUser={this.updateUser}/>
+          <Login serverURL={serverURL} updateUser={this.updateUser} expired={this.state.sessionExpired}/>
         </MuiThemeProvider>
       );  
     } else {
       return(
         <MuiThemeProvider>
-          <Dashboard token={this.state.jwtToken} userUuid={this.state.userUuid} userName={this.state.userName}/>
+          <Dashboard token={this.state.jwtToken} userUuid={this.state.user} userName={this.state.userName} logout={this.logout}/>
         </MuiThemeProvider>
       )
     }

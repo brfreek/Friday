@@ -3,6 +3,8 @@ import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
 
 import Main from './Main';
 import Apps from './Apps';
@@ -20,10 +22,14 @@ class Dashboard extends Component{
         super(props);
 
         this.state = {
-            showMenu: false
+            showMenu: false,
+            error: false,
+            errorMessage: ''
         }
         this.showMenu = this.showMenu.bind(this);
         this.leftButtonTap = this.leftButtonTap.bind(this);
+        this.showError = this.showError.bind(this);
+        this.closeDialog = this.closeDialog.bind(this);
     }
 
     showMenu(){
@@ -34,6 +40,18 @@ class Dashboard extends Component{
     leftButtonTap(){
         this.showMenu();
     }
+    showError(message){
+        var state = this.state;
+        state.error = true;
+        state.errorMessage = message;
+        this.setState(state);
+    }
+    closeDialog(){
+        var state = this.state;
+        state.error = false;
+        state.errorMessage = "";
+        this.setState(state);
+    }
     render(){
 
         const menuStyle = {
@@ -41,11 +59,29 @@ class Dashboard extends Component{
             margin: '16px 32px 16px 0',
             position: 'absolute'
           };
+        const AppComponent = (props) => {
+            return(
+                <Apps  {...props} jwtToken={this.props.token} userUuid={this.props.userUuid} sessionExpired={this.props.logout} showError={this.showError} />
+            )
+        };
+
+        const actions = [
+            <FlatButton label="OK"
+                primary={true}
+                onClick={this.closeDialog} />
+        ]
+        const message = <Dialog  
+                            actions={actions}
+                            modal={false}
+                            open={this.state.error}
+                            onRequestClose={this.closeDialog}/>;
+
+        console.log('Dashboard props: ' + JSON.stringify(this.props));
         return(
             <HashRouter>
                 <div >
                     <AppBar title={'Friday'}
-                        iconClassNameRight="muidocs-icon-navigation-expand-more"
+                        iconElementRight={<FlatButton label="Logout" onClick={this.props.logout} />}                            
                         onLeftIconButtonTouchTap={this.leftButtonTap} />
                     {this.state.showMenu ? 
                     <Paper style={menuStyle}>
@@ -58,11 +94,16 @@ class Dashboard extends Component{
                     </Paper>
                     : null}
                     <div className={'content'}>
-                        <Route exact path="/" component={Main} jwtToken={this.props.token} userUuid={this.props.userUuid} />
-                        <Route path="/apps" component={Apps} jwtToken={this.props.token} userUuid={this.props.userUuid} />
-                        <Route path="/recipes" component={Recipes} jwtToken={this.props.token} userUuid={this.props.userUuid} />
-                        <Route path="/deployments" component={Deployments} jwtToken={this.props.token} userUuid={this.props.userUuid} />
-                        {this.props.children}
+                        {this.state.error ? message : null}
+
+                        <Route exact path="/" component={Main}  />
+                        <Route path="/apps" render={AppComponent} />
+                        <Route path="/recipes" render={(props) => (
+                            <Recipes {...props} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid} />
+                        )} />
+                        <Route path="/deployments" render={(props) => (
+                            <Deployments {...props} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid} />
+                        )} />
                     </div>
                 </div>
             </HashRouter>
