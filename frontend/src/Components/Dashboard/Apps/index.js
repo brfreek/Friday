@@ -1,30 +1,31 @@
 import React, { Component } from 'react';
+import App from './App';
 
 const axios = require('axios');
+var _ = require('lodash');
+var _ = require('lodash/core');
+var fp = require('lodash/fp');
+var array = require('lodash/array');
+var object = require('lodash/fp/object');
 
 class Apps extends Component{
 
-    shouldComponentUpdate(nextProps, nextState){
-        console.log('should app component update?: ' + JSON.stringify(nextProps.params));
-        return true;
-    }
-
     constructor(props){
         super(props);
-        console.log('apps props: ' + JSON.stringify(props));
+        this.state = {
+            apps: []
+        }
+        this.setApps = this.setApps.bind(this);
         this.getAppsFromMendix = this.getAppsFromMendix.bind(this);
     }
-
-    shouldComponentUpdate(nextProps, nextState){
-        if(this.props.userUuid !== nextProps.userUuid){
-            return true;
-        }
-        if(this.props.jwtToken !== nextProps.jwtToken){
-            return true;
-        }
-        return false;
+    componentWillMount(nextProps, nextState){
+        this.getAppsFromMendix();
     }
-    
+    setApps(apps){
+        var state = this.state;
+        state.apps = apps;
+        this.setState(state);
+    }
     getAppsFromMendix(){
         console.log(this.props.userUuid)
         if(this.props.userUuid && this.props.jwtToken){
@@ -34,8 +35,13 @@ class Apps extends Component{
                     'x-access-token' : this.props.jwtToken
                 }
             }).then((response) => {
-                console.log("Apps!!!: " + JSON.stringify(response.data));
+                if(response.data.length > 0){
+                    this.setApps(response.data);
+                } else {
+                    this.setApps([]);
+                }
             }).catch((error) => {
+                console.log(JSON.stringify(error));
                 if(error.response){
                     var status = error.response.status;
                     switch(status){
@@ -55,11 +61,12 @@ class Apps extends Component{
     }
 
     render(){
-        this.getAppsFromMendix();
-        console.log('Rendered props: ' + JSON.stringify(this.props));
+        const apps = this.state.apps.map(function(item, index){
+            return <App appName={item.Name} appUrl={item.Url} appId={item.AppId} key={item.AppId}/>
+        });
         return(
             <div>
-                
+                {apps}
             </div>
         )
     }
