@@ -6,6 +6,7 @@ const SHA256 = require('crypto-js/sha256');
 const uuidv1 = require('uuid/v1');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
 var app = express();
 
@@ -19,12 +20,9 @@ var db = new loki(__dirname + '/friday.json', {
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+app.disable('etag');
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use(cors());
 
 function databaseInitialize() {
     var users = db.getCollection("users");
@@ -81,7 +79,8 @@ function startServer(){
     app.use('/api/v1/auth', authrouter(db));
     
     app.use((req, res, next) => {
-        var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        var token = req.headers["x-access-token"];
+        console.log("I can haz token? " + token);
         if(token){
             jwt.verify(token, require('./helper/secret'), (err, decoded) => {
                 if(err){
@@ -94,6 +93,7 @@ function startServer(){
                 }
             });
         } else {
+            console.log("No token found");
             res.status(401);
             res.json({
                 success: false,
