@@ -17,13 +17,41 @@ class Apps extends Component{
         }
         this.setApps = this.setApps.bind(this);
         this.getAppsFromMendix = this.getAppsFromMendix.bind(this);
+        this.getApp = this.getApp.bind(this);
     }
     componentWillMount(nextProps, nextState){
         this.getAppsFromMendix();
     }
+    getApp(appId){
+        if(this.props.userUuid && this.props.jwtToken){
+            const serverURL = "http://localhost:3001/api/v1/apps?user=" + this.props.userUuid + "&appId=" + appId;
+            axios.get(serverURL, {
+                headers: {
+                    "x-access-token": this.props.jwtToken
+                }
+            }).then((response) => {
+                console.log(response);
+            }).catch((error) => {
+                console.log(JSON.stringify(error));
+                this.manageError(error);
+            });
+        }
+    }
+    manageError(error){
+        var status = error.response.status;
+        switch(status){
+            case 401:
+                this.props.sessionExpired(true);
+                break;
+            default:
+                // console.log(JSON.stringify(error.response.data.message));
+                this.props.showError(error.response.data.message);
+                break;
+        }
+    }
     setApps(apps){
         var state = this.state;
-        state.apps = apps;
+        state.apps = apps.sort((a,b) => {return a.Name > b.Name ? 1 : ((b.Name > a.Name) ? -1 : 0)});
         this.setState(state);
     }
     getAppsFromMendix(){
@@ -49,21 +77,22 @@ class Apps extends Component{
                             this.props.sessionExpired(true);
                             break;
                         default:
-                            this.props.showError("Something went wrong!");
+                            // console.log(JSON.stringify(error.response.data.message));
+                            this.props.showError(error.response.data.message);
                             break;
                     }
                 } else {
                     this.props.showError(error);
                 }
-               
             });
         }
     }
+    
 
     render(){
         const apps = this.state.apps.map(function(item, index){
-            return <App appName={item.Name} appUrl={item.Url} appId={item.AppId} key={item.AppId}/>
-        });
+            return <App appName={item.Name} appUrl={item.Url} appId={item.AppId} key={item.AppId} onAppClick={this.getApp} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid}  />
+        }, this);
         return(
             <div>
                 {apps}

@@ -80,7 +80,6 @@ function startServer(){
     
     app.use((req, res, next) => {
         var token = req.headers["x-access-token"];
-        console.log("I can haz token? " + token);
         if(token){
             jwt.verify(token, require('./helper/secret'), (err, decoded) => {
                 if(err){
