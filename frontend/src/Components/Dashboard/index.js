@@ -41,6 +41,7 @@ class Dashboard extends Component{
         this.showMenu();
     }
     showError(message){
+        console.log('Showing error: ' + message);
         var state = this.state;
         state.error = true;
         state.errorMessage = message;
@@ -70,7 +71,8 @@ class Dashboard extends Component{
                 primary={true}
                 onClick={this.closeDialog} />
         ]
-        const message = <Dialog  
+        const message = <Dialog 
+                            title={this.state.errorMessage}
                             actions={actions}
                             modal={false}
                             open={this.state.error}
