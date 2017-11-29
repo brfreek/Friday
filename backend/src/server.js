@@ -76,6 +76,7 @@ function startServer(){
     const approuter = require('./routers/app');
     const userrouter = require('./routers/user');
     const authrouter = require('./routers/auth');
+    const reciperouter = require('./routers/recipes');
     app.use('/api/v1/auth', authrouter(db));
     
     app.use((req, res, next) => {
@@ -103,6 +104,6 @@ function startServer(){
     });
     app.use('/api/v1/apps', approuter(db));
     app.use('/api/v1/users', userrouter(db));
-
+    app.use('/api/v1/recipes', reciperouter(db));
     app.listen(3001);
 }
