@@ -95,7 +95,7 @@ class Dashboard extends Component{
                         </Menu>
                     </Paper>
                     : null}
-                    <div className={'content'}>
+                    <div className={'content'} style={{padding: "20px 20px 20px 20px"}}>
                         {this.state.error ? message : null}
 
                         <Route exact path="/" component={Main}  />
