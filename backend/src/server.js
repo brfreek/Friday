@@ -27,6 +27,9 @@ app.use(cors());
 function databaseInitialize() {
     var users = db.getCollection("users");
     var apps = db.getCollection("apps");
+    var recipes = db.getCollection("recipes");
+    var deployments = db.getCollection("deployments");
+    var schedules = db.getCollection("schedules");
     if(users === null) {
         users = db.addCollection("users",{
             unique: ['name'],
@@ -39,7 +42,24 @@ function databaseInitialize() {
             autoupdate: true
         })
     }
-
+    if(recipes === null){
+        recipes = db.addCollection("recipes", {
+            uniquq: ['uuid'],
+            autoupdate: true
+        })
+    }
+    if(deployments === null){
+        recipes = db.addCollection("deployments", {
+            uniquq: ['uuid'],
+            autoupdate: true
+        })
+    }
+    if(schedules === null){
+        recipes = db.addCollection("schedules", {
+            uniquq: ['uuid'],
+            autoupdate: true
+        })
+    }
     hasAdmin();
 }
 

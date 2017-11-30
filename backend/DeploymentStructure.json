@@ -1,0 +1,53 @@
+{
+  // A recipe is the blueprint of a mendix deployment. This will allow the user to select a source app ID to get a revision from to deploy and select a number of applications with environments to deploy these to.
+  "recipes": [
+      {
+        "uuid": 123, //Unique id
+        "name": "recipeName", //Name of the recipe for human identification
+        "type" : "SINGLE", //Type of deployment ENUM: SINGLE or LISTENER or SCHEDULED
+        "createdBy": 1234, //Who created the recipe
+        "sourceAppId": 1234, //What is the source app ID to deploy from,
+        "parallelExecution": false, //Is it a parallel background process?
+        "environments": [ //List of environments that the user wants to deploy to.
+          {
+            "appId" : 1234, //ID of the Mendix app
+            "Mode" : "TEST / ACCP / PROD", //Mode of the Mendix app as described 
+            "order": 0 //Should it be in order, whats the order
+          }
+        ],
+        "lastRun" : "dateTime", //Last time the recipe ran
+        "lastSuccess" : "dateTime", //Last time it succeedded
+        "lastFail" : "dateTime", //Last time it failed
+        "lastRevision" : 1234, //Last revision number that has been deployed
+        "numberOfDeployments": 10, //amount of deployments made
+        "numberOfSuccess": 9, //Number of successes
+        "numberOfFails": 1 //Number of fails
+      },
+      {}
+    ],
+    //A deployment is an instance of a recipe execution. It will show the current progress if its running, or otherwise be stored for historical purposses
+    "deployment": [
+      {
+        "uuid": 213, //Deployment id
+        "recipeId": 123, //What recipe is used for the deployment
+        "success": true, //Did the deployment succeed
+        "message": "somethin about the deployment", //Room to create a message if the deployment fails
+        "startDate": "dateTime", //Start date
+        "runningTime": 123, //Amount of time in minutes
+        "startBy": 123, //UserUUID
+        "revision": 123, //Revision that has been deployed
+        "progress": 100 //progress in percentage
+      }
+    ],
+    //Schedules are in essence automated deployments to check on the 
+    "schedule" : [
+      {
+        "uuid" : 123,
+        "startDate": "dateTime",
+        "interval" : 1,
+        "recipe": 123,
+        
+      }  
+    ]
+  
+}
