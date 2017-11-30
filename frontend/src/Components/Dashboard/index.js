@@ -24,12 +24,14 @@ class Dashboard extends Component{
         this.state = {
             showMenu: false,
             error: false,
-            errorMessage: ''
+            errorMessage: "",
+            apps: []
         }
         this.showMenu = this.showMenu.bind(this);
         this.leftButtonTap = this.leftButtonTap.bind(this);
         this.showError = this.showError.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
+        this.setAppsGlobal = this.setAppsGlobal.bind(this);
     }
 
     showMenu(){
@@ -53,6 +55,12 @@ class Dashboard extends Component{
         state.errorMessage = "";
         this.setState(state);
     }
+    setAppsGlobal(apps){
+        console.log("Trying to set apps ya know: " + apps);
+        var state = this.state;
+        state.apps = apps;
+        this.setState(state);
+    }
     render(){
 
         const menuStyle = {
@@ -62,10 +70,14 @@ class Dashboard extends Component{
           };
         const AppComponent = (props) => {
             return(
-                <Apps  {...props} jwtToken={this.props.token} userUuid={this.props.userUuid} sessionExpired={this.props.logout} showError={this.showError} />
+                <Apps  {...props} jwtToken={this.props.token} userUuid={this.props.userUuid} sessionExpired={this.props.logout} showError={this.showError} apps={this.state.apps} setApps={this.setAppsGlobal} />
             )
         };
-
+        const RecipesComponent = (props) => {
+            return (
+                <Recipes {...props} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid} apps={this.state.apps} showError={this.showError} />
+            )
+        }
         const actions = [
             <FlatButton label="OK"
                 primary={true}
@@ -100,9 +112,7 @@ class Dashboard extends Component{
 
                         <Route exact path="/" component={Main}  />
                         <Route path="/apps" render={AppComponent} />
-                        <Route path="/recipes" render={(props) => (
-                            <Recipes {...props} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid} />
-                        )} />
+                        <Route path="/recipes" render={RecipesComponent} />
                         <Route path="/deployments" render={(props) => (
                             <Deployments {...props} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid} />
                         )} />

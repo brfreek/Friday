@@ -3,6 +3,7 @@ import MenuItem from 'material-ui/MenuItem';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
+import NewRecipe from './NewRecipe';
 
 const axios = require('axios');
 
@@ -17,6 +18,7 @@ class Recipes extends Component {
         }
 
         this.changeRecipeView = this.changeRecipeView.bind(this);
+        this.createRecipe = this.createRecipe.bind(this);
     }
 
     getRecipes(){
@@ -31,12 +33,12 @@ class Recipes extends Component {
 
     createRecipe(){
         var state = this.state;
-        state.createNew = !state.createNew;
+        state.createNew = !this.state.createNew;
         this.setState(state);
     }
 
     render() {
-
+        console.log("Recipe render");
         return(
             <div>
                 <Toolbar> 
@@ -47,13 +49,13 @@ class Recipes extends Component {
                         </DropDownMenu>
                     </ToolbarGroup>
                     <ToolbarGroup>
-                        <RaisedButton label={this.state} primary={true} onClick={this.createRecipe}/>
+                        <RaisedButton label={this.state.createNew ? "Save recipe" : "New recipe"} primary={true} onClick={this.createRecipe}/>
                     </ToolbarGroup>
                 </Toolbar>
                 <div className={'recipes-content'} style={{marginTop: '20px'}}>
                     {this.state.createNew ? 
                         <div>
-                        new
+                            <NewRecipe apps={this.props.apps} />
                         </div>            
                     : 
                         <div>

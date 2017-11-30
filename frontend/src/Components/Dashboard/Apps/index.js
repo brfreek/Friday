@@ -45,14 +45,13 @@ class Apps extends Component{
                 break;
             default:
                 // console.log(JSON.stringify(error.response.data.message));
-                this.props.showError(error.response.data.message);
+                this.props.showError("error.response.data.message");
                 break;
         }
     }
     setApps(apps){
-        var state = this.state;
-        state.apps = apps.sort((a,b) => {return a.Name > b.Name ? 1 : ((b.Name > a.Name) ? -1 : 0)});
-        this.setState(state);
+        apps = apps.sort((a,b) => {return a.Name > b.Name ? 1 : ((b.Name > a.Name) ? -1 : 0)});
+        this.props.setApps(apps);
     }
     getAppsFromMendix(){
         console.log(this.props.userUuid)
@@ -63,10 +62,11 @@ class Apps extends Component{
                     'x-access-token' : this.props.jwtToken
                 }
             }).then((response) => {
+                console.log("Apps response")
                 if(response.data.length > 0){
-                    this.setApps(response.data);
+                    this.props.setApps(response.data);
                 } else {
-                    this.setApps([]);
+                    this.props.setApps([]);
                 }
             }).catch((error) => {
                 console.log(JSON.stringify(error));
@@ -78,11 +78,13 @@ class Apps extends Component{
                             break;
                         default:
                             // console.log(JSON.stringify(error.response.data.message));
+                            console.log("Default error");
                             this.props.showError(error.response.data.message);
                             break;
                     }
                 } else {
-                    this.props.showError(error);
+                    console.log(error);
+                    this.props.showError("Something went wrong but I don't know why");
                 }
             });
         }
@@ -90,7 +92,7 @@ class Apps extends Component{
     
 
     render(){
-        const apps = this.state.apps.map(function(item, index){
+        const apps = this.props.apps.map(function(item, index){
             return <App appName={item.Name} appUrl={item.Url} appId={item.AppId} key={item.AppId} onAppClick={this.getApp} jwtToken={this.props.jwtToken} userUuid={this.props.userUuid}  />
         }, this);
         return(

@@ -74,8 +74,8 @@ export default class App extends Component{
             color: '#ffffff'
         }
         const environments = this.state.environments.map((item, index) => {
-            const color = item.Status === "Running" ? green400 : item.status === "Stopped" ? red500 : item.status === "Empty" ? grey500 : grey500;
-            return (<Chip onClick={this.openUrl} backgroundColor={color} style={chipStyle}><span style={{color: '#fff'}}>{item.Mode}</span></Chip>)
+            const color = item.Status === "Running" ? green400 : item.Status === "Stopped" ? red500 : item.Status === "Empty" ? grey500 : grey500;
+            return (<Chip key={item.Mode} onClick={this.openUrl} backgroundColor={color} style={chipStyle}><span style={{color: '#fff'}}>{item.Mode}</span></Chip>)
         }, this);
         return (
             <Card style={style} onClick={this.clickCard}>
